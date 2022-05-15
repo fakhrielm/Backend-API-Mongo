@@ -167,13 +167,17 @@ const deleteUser = async (req, h) => {
 };
 
 // Check if user exist in collection by name & email
-const checkUser = async (req, nama, h) => {
-   // const nama = req.body.nama;
+const fetchUser = async (req, h) => {
+   const nama = req.payload.nama;
+   const password = req.payload.password;
 
-   const checkNama = await req.mongo.db.collection("users").findOne({ nama }.toArray());
+   console.log(nama);
+   console.log(password);
+
+   const checkNama = await req.mongo.db.collection("users").findOne({ nama });
    console.log(checkNama);
 
-   if (checkNama) {
+   if (checkNama && checkNama.password === password) {
       console.log("user exist");
 
       const response = h.response({
@@ -197,4 +201,4 @@ const checkUser = async (req, nama, h) => {
    }
 };
 
-module.exports = { getAllUser, addUser, getUser, updateUser, deleteUser, checkUser };
+module.exports = { getAllUser, addUser, getUser, updateUser, deleteUser, fetchUser };

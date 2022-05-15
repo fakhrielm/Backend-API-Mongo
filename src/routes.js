@@ -3,7 +3,7 @@
 const Joi = require("@hapi/joi");
 Joi.objectId = require("joi-objectid")(Joi);
 
-const { getAllUser, addUser, getUser, updateUser, deleteUser, checkUser } = require("./handler");
+const { getAllUser, addUser, getUser, updateUser, deleteUser, fetchUser } = require("./handler");
 
 const routes = [
    {
@@ -72,9 +72,9 @@ const routes = [
       handler: () => "Halaman tidak ditemukan",
    },
    {
-      method: "GET",
+      method: "POST",
       path: "/fetchUser",
-      handler: checkUser,
+      handler: fetchUser,
    },
 ];
 
