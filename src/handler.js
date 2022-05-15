@@ -140,8 +140,30 @@ const deleteUser = async (req, h) => {
    const id = req.params.id;
    const ObjectID = req.mongo.ObjectID;
 
-   const status = await req.mongo.db.collection("users").deleteOne({ _id: ObjectID(id) });
-   return status;
+   const checkId = await req.mongo.db.collection("users").findOne({ _id: new ObjectID(id) });
+   console.log(checkId);
+
+   if (checkId) {
+      const status = await req.mongo.db.collection("users").deleteOne({ _id: ObjectID(id) });
+
+      const response = h.response({
+         status: "success",
+         message: "user has been deleted",
+         data: {
+            status,
+            checkId,
+         },
+      });
+      response.code(200);
+      return response;
+   }
+
+   const response = h.response({
+      status: "fail",
+      message: "objectId does not exist",
+   });
+   response.code(500);
+   return response;
 };
 
 // Check if user exist in collection by name & email
