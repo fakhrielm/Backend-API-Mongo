@@ -32,7 +32,7 @@ const addUser = async (req, h) => {
    const payload = req.payload;
    const user = await req.mongo.db.collection("users").insertOne(payload);
 
-   if (user !== undefined) {
+   if (user) {
       const response = h.response({
          status: "success",
          message: "user added to database",

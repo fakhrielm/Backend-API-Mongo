@@ -1,3 +1,5 @@
+"use strict";
+
 const Joi = require("@hapi/joi");
 Joi.objectId = require("joi-objectid")(Joi);
 
@@ -12,6 +14,27 @@ const routes = [
    {
       method: "POST",
       path: "/users",
+      options: {
+         validate: {
+            payload: Joi.object({
+               userId: Joi.string().required(),
+               nama: Joi.string().required(),
+               email: Joi.string().required(),
+               password: Joi.string().required(),
+               isBusinessAcc: Joi.boolean().default(false),
+               storeName: Joi.string().allow(null, ""),
+               company: Joi.string().allow(null, ""),
+               storeLocation: Joi.object({
+                  lat: Joi.string().allow(null, ""),
+                  lon: Joi.string().allow(null, ""),
+               }),
+            }),
+            failAction: (request, h, err) => {
+               request.log("error", err);
+               throw err;
+            },
+         },
+      },
       handler: addUser,
    },
    {
