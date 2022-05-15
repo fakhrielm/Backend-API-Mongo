@@ -92,15 +92,15 @@ const updateUser = async (req, h) => {
    const payload = req.payload;
 
    // check payload if field exists inside collection
-   const checkPayload = await req.mongo.db.collection("users").findOne(payload);
-   console.log(checkPayload);
+   const checkPayload = await req.mongo.db.collection("users").find(payload);
+   //    console.log(checkPayload);
 
    if (checkPayload) {
       console.log("field exist");
 
       const status = await req.mongo.db.collection("users").updateOne({ _id: ObjectID(id) }, { $set: payload });
       console.log(payload);
-      console.log(status);
+      //   console.log(status);
 
       if (status) {
          const response = h.response({
@@ -135,7 +135,7 @@ const updateUser = async (req, h) => {
    return response;
 };
 
-// delte user based in objectId mongodb
+// delete user based in objectId mongodb
 const deleteUser = async (req, h) => {
    const id = req.params.id;
    const ObjectID = req.mongo.ObjectID;
