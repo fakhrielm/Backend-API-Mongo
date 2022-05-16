@@ -255,4 +255,4 @@ const addItem = async (req, h) => {
 };
 
 
-module.exports = { getAllUser, signUp, signIn, getUserById, updateUser, deleteUser, getAllItem, addItem };
+module.exports = { getAllUser, signUp, signIn, getUserById, updateUser, deleteUser, getAllItem, addItem};
