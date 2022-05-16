@@ -200,5 +200,59 @@ const deleteUser = async (req, h) => {
    response.code(500);
    return response;
 };
+// Get all item
+const getAllItem = async (req, h) => {
+   const offset = Number(req.query.offset) || 0;
+   const user = await req.mongo.db.collection("items").find({}).sort({ metacritic: -1 }).skip(offset).limit(20).toArray();
 
-module.exports = { getAllUser, signUp, signIn, getUserById, updateUser, deleteUser };
+   // count number of records in database
+   const status = await req.mongo.db.collection("items").count();
+   console.log(status);
+
+   // check if collection is populated
+   if (status > 0) {
+      const response = h.response({
+         status: "success",
+         message: "user retrieved",
+         data: [user],
+      });
+      response.code(200);
+      return response;
+   }
+
+   const response = h.response({
+      status: "fail",
+      message: "no user retrieved",
+      data: [],
+   });
+   response.code(404);
+   return response;
+};
+// Add a item  to the collection
+const addItem = async (req, h) => {
+   const payload = req.payload;
+   const user = await req.mongo.db.collection("items").insertOne(payload);
+
+   if (user) {
+      const response = h.response({
+         status: "success",
+         message: "item added to database",
+         user,
+         data: {
+            payload,
+         },
+      });
+      response.code(201);
+      return response;
+   }
+
+   const response = h.response({
+      status: "fail",
+      message: "something went wrong",
+   });
+   response.code(404);
+   return response;
+};
+
+
+module.exports = { getAllUser, signUp, signIn, getUserById, updateUser, deleteUser, getAllItem, addItem };
