@@ -3,7 +3,7 @@
 const Joi = require("@hapi/joi");
 Joi.objectId = require("joi-objectid")(Joi);
 
-const { getAllUser, addUser, getUser, updateUser, deleteUser, fetchUser } = require("./handler");
+const { getAllUser, signUp, signIn, getUserById, updateUser, deleteUser } = require("./handler");
 
 const routes = [
    {
@@ -13,7 +13,7 @@ const routes = [
    },
    {
       method: "POST",
-      path: "/users",
+      path: "/sign-up",
       options: {
          validate: {
             payload: Joi.object({
@@ -25,8 +25,8 @@ const routes = [
                storeName: Joi.string().allow(null, ""),
                company: Joi.string().allow(null, ""),
                storeLocation: Joi.object({
-                  lat: Joi.string().allow(null, ""),
-                  lon: Joi.string().allow(null, ""),
+                  lat: Joi.number().allow(null, ""),
+                  lon: Joi.number().allow(null, ""),
                }),
             }),
             failAction: (request, h, err) => {
@@ -35,12 +35,17 @@ const routes = [
             },
          },
       },
-      handler: addUser,
+      handler: signUp,
+   },
+   {
+      method: "POST",
+      path: "/sign-in",
+      handler: signIn,
    },
    {
       method: "GET",
       path: "/users/{id}",
-      handler: getUser,
+      handler: getUserById,
    },
    {
       method: "PUT",
@@ -70,11 +75,6 @@ const routes = [
       method: "*",
       path: "/{any*}",
       handler: () => "Halaman tidak ditemukan",
-   },
-   {
-      method: "POST",
-      path: "/fetchUser",
-      handler: fetchUser,
    },
 ];
 

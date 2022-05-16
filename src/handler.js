@@ -1,4 +1,4 @@
-// Get all movies
+// Get all users
 const getAllUser = async (req, h) => {
    const offset = Number(req.query.offset) || 0;
    const user = await req.mongo.db.collection("users").find({}).sort({ metacritic: -1 }).skip(offset).limit(20).toArray();
@@ -8,7 +8,7 @@ const getAllUser = async (req, h) => {
    console.log(status);
 
    // check if collection is populated
-   if (status !== 0) {
+   if (status > 0) {
       const response = h.response({
          status: "success",
          message: "user retrieved",
@@ -27,8 +27,8 @@ const getAllUser = async (req, h) => {
    return response;
 };
 
-// Add a new user to the database
-const addUser = async (req, h) => {
+// Add a new user to the collection
+const signUp = async (req, h) => {
    const payload = req.payload;
    const user = await req.mongo.db.collection("users").insertOne(payload);
 
@@ -53,8 +53,43 @@ const addUser = async (req, h) => {
    return response;
 };
 
-// Get a single user
-const getUser = async (req, h) => {
+// Get user by name and password
+const signIn = async (req, h) => {
+   const nama = req.payload.nama;
+   const password = req.payload.password;
+
+   console.log(nama);
+   console.log(password);
+
+   const checkNama = await req.mongo.db.collection("users").findOne({ nama });
+   console.log(checkNama);
+
+   if (checkNama && checkNama.password === password) {
+      console.log("user exist");
+
+      const response = h.response({
+         status: "success",
+         message: "user retrieved",
+         data: {
+            checkNama,
+         },
+      });
+      response.code(200);
+      return response;
+   } else {
+      console.log("user does not exit");
+
+      const response = h.response({
+         status: "fail",
+         message: "user doesnt exist",
+      });
+      response.code(500);
+      return response;
+   }
+};
+
+// Get user by their id params
+const getUserById = async (req, h) => {
    const id = req.params.id;
    const ObjectID = req.mongo.ObjectID;
    const user = await req.mongo.db
@@ -166,39 +201,4 @@ const deleteUser = async (req, h) => {
    return response;
 };
 
-// Check if user exist in collection by name & email
-const fetchUser = async (req, h) => {
-   const nama = req.payload.nama;
-   const password = req.payload.password;
-
-   console.log(nama);
-   console.log(password);
-
-   const checkNama = await req.mongo.db.collection("users").findOne({ nama });
-   console.log(checkNama);
-
-   if (checkNama && checkNama.password === password) {
-      console.log("user exist");
-
-      const response = h.response({
-         status: "success",
-         message: "user retrieved",
-         data: {
-            checkNama,
-         },
-      });
-      response.code(200);
-      return response;
-   } else {
-      console.log("user does not exit");
-
-      const response = h.response({
-         status: "fail",
-         message: "user doesnt exist",
-      });
-      response.code(500);
-      return response;
-   }
-};
-
-module.exports = { getAllUser, addUser, getUser, updateUser, deleteUser, fetchUser };
+module.exports = { getAllUser, signUp, signIn, getUserById, updateUser, deleteUser };
